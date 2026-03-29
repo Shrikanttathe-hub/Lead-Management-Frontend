@@ -1,0 +1,99 @@
+footer{
+    width: 100%;
+    background-color: black;
+    border-top: 1px solid grey;
+    padding: 30px 20px;
+}
+
+footer .footerContent{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+footer .footerContent .logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 20%;
+}
+footer .footerContent .logo .logoImage{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+footer .footerContent .logo .logoImage img{
+    width: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+footer .footerContent .logo p{
+    text-align: start;
+    padding-left: 20px;
+    font-size: 16px;
+    color: darkgrey;
+
+}
+footer .footerContent .left{
+    width: 30%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+footer .footerContent .left ul{
+    list-style: none;
+}
+footer .footerContent .left ul li{
+    padding: 5px 0px;
+    transition: 0.3s ease-in;
+    color: darkgrey;
+}
+footer .footerContent .left ul li:hover{
+    color: #fff;
+    transform: translateX(-5px);
+    cursor: pointer;
+}
+footer .footerContent .right{
+    width: 20%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+    color: darkgray;
+}
+footer .footerContent .right .social{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+footer .footerContent .right .social svg{
+    min-width: 40px;
+    min-height: 40px;
+    transition: 0.2s ease-in;
+    background-color: #575F6A;
+    border-radius: 50%;
+    padding: 8px 0px;
+    color: #fff;
+}
+footer .footerContent .right .social svg:hover{
+     transform: scale(1.1);
+     cursor: pointer;
+}
+footer .footerContent .right ul{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    gap: 20px;
+}
+footer .footerContent .right ul li{
+    color: #fff;
+    cursor: pointer;
+}
+footer .bottom{
+    padding: 10px 0px;
+    text-align: center;
+    color: darkgrey;
+}

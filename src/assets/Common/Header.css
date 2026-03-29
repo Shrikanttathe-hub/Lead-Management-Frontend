@@ -1,0 +1,110 @@
+/* #14B8A6   (teal) */
+
+header {
+  width: 100%;
+  box-shadow: 0px 0px 10px rgba(0 0 0 / 80%);
+  /* padding: 15px 20px; */
+  position: fixed;
+  z-index: 99999;
+  max-height: 91px;
+  background: linear-gradient(135deg, #0f172a, #0b132b, #0a0a0a);
+  top: 0;
+  left: 0;
+}
+header .headerContent {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header .headerContent h1{
+    font-size: 35px;
+    font-weight: 700;
+}
+header .logoInput a {
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+header .headerContent .logoInput {
+  width: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+header .headerContent .inputSearch {
+  position: relative;
+  width: 30%;
+}
+header .headerContent .inputSearch input {
+  width: 100%;
+  padding: 10px 20px;
+  border: none;
+  color: teal;
+  font-family: "Quicksand", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  background-color: #e2e8f0;
+}
+header .headerContent .inputSearch .searchImage {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+header .headerContent nav ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  list-style: none;
+  text-decoration: none;
+}
+header nav ul li {
+  color: #e2e8f0;
+  font-family: "DM Sans", sans-serif;
+  font-size: 25px;
+  font-weight: 400;
+  text-decoration: none !important;
+}
+header a {
+  text-decoration: none !important;
+}
+header .buttonSection .userImageButton{
+ display: flex;
+ justify-content:center;
+ align-items: center;
+ border-radius: 50%;
+ border: none;
+ padding: 0px;
+ min-width: 40px;
+ min-height: 40px ;
+ background: white;
+ object-fit: contain;
+}
+header .buttonSection .userImageButton svg{
+  font-size: 30px;
+}
+header .buttonSection {
+  width: 20%;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  column-gap: 20px;
+}
+
+header button {
+  border: none;
+  color: #fff;
+  font-size: 25px;
+  padding: 5px 20px;
+  background: linear-gradient(90deg, #0ea5a4, #0891b2);
+  font-family: "DM Sans", sans-serif;
+}
+
+header button, li:hover {
+  cursor: pointer;
+  opacity: 70%;
+}

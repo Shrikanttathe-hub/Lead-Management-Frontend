@@ -1,0 +1,328 @@
+.leadSection{
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 100px;
+    color: #fff;
+    padding-bottom: 40px;
+}
+.leadSection h2{
+    font-size: 35px;
+    padding: 20px;
+}
+.leadSection .leadContent{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.leadSection .leadContent .topbar{
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   width: 100%;
+   padding: 20px;
+}
+.leadSection .leadContent .topbar .serachbar{
+    width: 30%;
+}
+.leadSection .leadContent .topbar .serachbar input{
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+}
+.leadSection .leadContent .topbar .serachbar input::placeholder{
+    color: #fff;
+}
+.leadSection .leadContent .topbar .filter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.leadSection .leadContent .topbar .filter .custom-select{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ gap:10px
+}
+.leadSection .leadContent .topbar .filter .custom-select select{
+    width: 100%;
+    padding: 10px 10px;
+    font-size: 18px;
+}
+.leadSection .leadContent .topbar .ImportButtton{
+    background-color: #757575;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+.leadSection .leadContent .topbar .ImportButtton input,.leadSection .leadContent .topbar .ImportButtton input label{
+    cursor: pointer;
+}
+.leadSection .leadContent .topbar .exportButtton,.leadSection .leadContent .topbar .ImportButtton, .leadSection .leadContent .topbar .AddLeadButtton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+.leadSection .leadContent .topbar .exportButtton svg,.leadSection .leadContent .topbar .ImportButtton svg, .leadSection .leadContent .topbar .AddLeadButtton svg{
+cursor: pointer;
+}
+.leadSection .leadContent .topbar .exportButtton button,.leadSection .leadContent .topbar .ImportButtton button, .leadSection .leadContent .topbar .AddLeadButtton button{
+   padding: 10px 15px;
+   font-size: 16px;
+   font-weight:600;
+   cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 10px;
+}
+.leadSection .leadContent .topbar .AddLeadButtton button{
+    background-color: #3B5998;
+    border: none;
+}
+
+.leadSection .leadContent .bottomContent{
+  width: 100%;
+}
+.leadSection .leadContent .bottomContent table{
+    width: 100%;
+    height: auto;
+    border-collapse: collapse;
+}
+.leadSection .leadContent .bottomContent table td button{
+    padding: 5px 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.leadSection .leadContent .bottomContent table td .tagBtn{
+    margin-left: 10px;
+}
+.leadSection .leadContent .bottomContent table td .edit{
+    background-color: darkgreen;
+}
+.leadSection .leadContent .bottomContent table td .delete{
+    background-color: red;
+}
+.leadSection .leadContent .bottomContent table td .eye{
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.popUpProfile {
+    width: 100%;
+    height: calc(100vh - 91px);
+    position: fixed;
+    top: 91px;
+    left: 0;
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 40px 0;
+}
+
+.popUpProfile .popUpModal {
+    width: 80%;
+    box-shadow: 0px 0px 10px rgb(0 0 0 /10%);
+    z-index: 9999;
+    position: relative;
+    background-color: #fff;
+    padding: 30px 20px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.popUpProfile .popUpModal button {
+    background: transparent;
+    border: none;
+    color: rgba(0, 0, 0, 0.849);
+    font-size: 25px;
+    font-weight: 800;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile {
+    width: 100%;
+    color: black;
+}
+
+.popUpModal h2,
+.popUpModal p {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.856);
+
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0px;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner .firstName,
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner .lastName {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    font-size: 20px;
+    width: 48%;
+    position: relative;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner .firstName label,
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner .lastName label {
+    font-size: 18px;
+    font-weight: 500;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(15%, -50%);
+    background-color: #fff;
+    padding: 0px 5px;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner .firstName input,
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner .lastName input {
+    padding: 15px 20px;
+    background-color: transparent;
+    border-radius: 5px;
+    font-size: 16px;
+    color: grey;
+    border: 1px solid grey;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(4) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(4) .firstName {
+    width: 48%;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(4) .firstName textarea {
+    background-color: transparent;
+    width: 100%;
+    padding: 30px 20px;
+    border-radius: 5px;
+    color: gray;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(5) .firstName {
+    width: 70%;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(5) .firstName input {
+    border: 1px solid;
+    cursor: pointer;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(5) .firstName input::file-selector-button {
+    background-color: transparent;
+    border: none;
+    color: green;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatinerButton {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatinerButton .editSubmit {
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 10px;
+    background-color: green;
+    position: relative;
+    text-align: end;
+    color: #fff;
+}
+
+.profileSection .viewCount {
+    padding: 30px 20px;
+    width: 100%;
+    /* min-height: 200px; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profileSection .viewCount .card {
+    width: 20%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.904);
+    padding: 20px 30px;
+    /* border: 1px solid; */
+    text-align: center;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(5) {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 20px;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(5) .profilePopImage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    max-height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.popUpProfile .popUpModal .popUpEditProfile .nameConatiner:nth-child(5) .profilePopImage img {
+    width: 100%;
+}
+
+.profileDetails .socialLinks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+ .popUpProfile .popUpModal .popUpEditProfile .nameConatiner .lastName select{
+   padding: 15px;
+   background-color: #fff;
+   color: grey;
+   font-size: 16px;
+   width: 100%;
+   border-radius: 5px;
+ }
+ .popUpProfile .popUpModal .popUpEditProfile .nameConatiner .lastName select option{
+    width: 100%;
+    overflow: hidden;
+ }
+ .popUpProfile .popUpModal .popUpEditProfile .nameConatiner .lastName select option:nth-child(1){
+   font-weight: 700;
+   color: black;
+ }
+
+.viewPage{
+    border: 1px solid gray;
+    padding: 10px 20px;
+}
+.viewPage p{
+    text-align: center;
+    font-size: 25px;
+    padding: 10px 20px;
+    border-bottom: 1px solid gray;
+}
