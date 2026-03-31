@@ -326,3 +326,65 @@ cursor: pointer;
     padding: 10px 20px;
     border-bottom: 1px solid gray;
 }
+table tr .status span, 
+table tr .status-new span,
+table tr .status-contacted span,
+table tr .status-qualified span,
+table tr .status-lost span,
+table tr .status-won span{
+border-radius: 5px;
+padding: 5px 10px;
+font-weight: 500;
+}
+
+table tr .status-new span {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 2px solid #1976d2;
+}
+
+.status-contacted span {
+  background: #fff3e0;
+  color: #f57c00;
+  border: 2px solid #f57c00;
+}
+
+.status-qualified span {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 2px solid #2e7d32;
+}
+
+.status-lost span {
+  background: #ffebee;
+  color: #c62828;
+  border: 2px solid #c62828;
+}
+
+.status-won span{
+  background: #ede7f6;
+  color: #6a1b9a;
+  border: 2px solid #6a1b9a;
+}
+.viewTags .popUpModal{
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+.viewTags .popUpModal input{
+    width: 100%;
+    padding: 20px 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    color: grey;
+    border: 1px solid grey;
+}
+.viewTags .popUpModal .tagBtn{
+    position: relative;
+    background-color: green;
+    padding: 10px 20px;
+    border-radius: 5px;
+}

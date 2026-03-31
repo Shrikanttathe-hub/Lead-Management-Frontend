@@ -84,7 +84,7 @@
     border: 1px solid orangered;
     width: 40%;
     color: black;
-    font-size: 700;
+    font-weight: 700;
 }
 
 .alreadyAccount button:hover {
@@ -92,22 +92,6 @@
     border: none;
     color: black;
 }
-
-/* .loginFormNew {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.loginFormNew .loginForm {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: auto;
-    overflow: visible;
-} */
 
 .loginForm .alreadyAccount {
     width: 100%;

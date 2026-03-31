@@ -14,6 +14,7 @@ import { saveAs } from "file-saver";
 
 const Lead = () => {
   const API = import.meta.env.VITE_API_URL;
+  const [viewTags, setViewTags] = useState(false)
   const [editActive, setEditActive] = useState(false);
   const [viewPage, setViewPage] = useState(false);
   const [data, setData] = useState([]);
@@ -351,7 +352,7 @@ const Lead = () => {
                     <th>Status</th>
                     <th>Tags</th>
                     <th>Notes</th>
-                    <th>Assigned</th>
+                    <th>Assigned To</th>
                     <th colSpan={3}>Actions</th>
                   </tr>
                 </thead>
@@ -363,10 +364,10 @@ const Lead = () => {
                       <td>{leads?.email}</td>
                       <td>{leads?.phoneNumber}</td>
                       <td>{leads?.source}</td>
-                      <td>{leads?.status}</td>
-                      <td>{leads?.tags?.map((tag, index) => (<span key={index} className='tagChip'>{tag}</span>))}<button className='tagBtn'><FaPlus /></button></td>
+                      <td className={`status ${leads?.status === "New" ? "status-new" : leads?.status === "Contacted" ? "status-contacted" : leads?.status === "Qualified" ? "status-qualified" : leads?.status === "Lost" ? "status-lost" : leads?.status === "Won" ? "status-won": "" }`}><span>{leads?.status}</span></td>
+                      <td>{leads.tags.length > 0 ? (leads?.tags?.map((tag, index) => (<><span key={index} className='tagChip'>{tag}</span><button className='tagBtn' onClick={()=> setViewTags(true)}><FaPlus /></button></>))) : (<><span>Click to add</span><button className='tagBtn'  onClick={()=> setViewTags(true)}><FaPlus /></button> </>) } </td>
                       <td>
-                        {leads?.notes?.length > 0 && (
+                        {leads?.notes?.length > 0 ? (
                           <>
                             {leads.notes[leads.notes.length - 1].message}
                             <br />
@@ -375,9 +376,9 @@ const Lead = () => {
                                 .toLocaleString()}
                             </strong>
                           </>
-                        )}
+                        ): (<span>No Notes</span>)}
                       </td>
-                      <td>{leads?.assigned?.firstName || "Not assigned"}</td>
+                      <td>{leads?.assigned?.firstName + " " + leads?.assigned?.lastName  || "Not assigned"}</td>
                       <td><button className='eye' onClick={() => { setSelectedLead(leads); setViewPage(true) }}><FaRegEye /></button></td>
                       <td><button
                         className='edit'
@@ -560,6 +561,20 @@ const Lead = () => {
               </p>
               <p>Assigned To: {selectedLead?.assigned?.firstName || "Not assigned"}</p>
             </div>
+          </div>
+        </div>)}
+   {viewTags && (
+        <div className="popUpProfile viewTags" onClick={() => setViewTags(false)}>
+          <div className="popUpModal" onClick={(e) => e.stopPropagation()}>
+            <div className="headerPopUp">
+              <h2>Add Tags</h2>
+              <p>Add Your Tags here.</p>
+              <button onClick={() => setViewTags(false)}>X</button>
+            </div>
+            <div className='popUpEditProfile viewTag'>
+                <input type='text' placeholder='Add your Tags here' value={updateData?.tags} onChange={(e)=> setUpdateData(e.target.value)}/>
+            </div>
+            <button className='tagBtn' onClick={handleUpdate}>Add tag</button>
           </div>
         </div>)}
 

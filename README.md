@@ -96,6 +96,7 @@ This application helps manage leads, assign agents, track status, and perform op
 ```bash
 git clone https://github.com/Shrikanttathe-hub/Lead-Management-Frontend.git (frontend)
 git clone https://github.com/Shrikanttathe-hub/Lead-Management-Backend.git (Backend)
+vercel Live Link: https://lead-management-frontend-mocha.vercel.app
 cd lead-management-portal
 ```
 
