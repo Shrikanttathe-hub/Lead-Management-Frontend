@@ -4,17 +4,20 @@ import Header from '../Components/Header';
 
 import Footer from '../Components/Footer';
 import { PiExportBold } from "react-icons/pi";
-import { FaFileImport } from "react-icons/fa";
+import { FaEdit, FaFileImport } from "react-icons/fa";
 import { FaPlus, FaRegEye } from 'react-icons/fa6';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { HiDotsVertical } from 'react-icons/hi';
+import { MdDeleteForever } from 'react-icons/md';
 
 const Lead = () => {
   const API = import.meta.env.VITE_API_URL;
-  const [viewTags, setViewTags] = useState(false)
+  const [viewTags, setViewTags] = useState(false);
+  const [viewTagsEdit, setViewTagsEdit] = useState(false);
   const [editActive, setEditActive] = useState(false);
   const [viewPage, setViewPage] = useState(false);
   const [data, setData] = useState([]);
@@ -24,6 +27,7 @@ const Lead = () => {
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
+  const [newTag, setNewTag] = useState("");
   const [updateData, setUpdateData] = useState({
     name: "",
     email: "",
@@ -67,7 +71,7 @@ const Lead = () => {
         tags: updateData.tags ? updateData.tags.split(",").map(t => t.trim()) : [],
         note: updateData.notes
       };
-      const response = await axios.post(`${API}/lead/create`,payload,{headers: {Authorization: `Bearer ${token}`}});
+      const response = await axios.post(`${API}/lead/create`, payload, { headers: { Authorization: `Bearer ${token}` } });
       toast.success("Lead Created Successfully");
       setEditActive(false);
       setUpdateData({
@@ -139,7 +143,6 @@ const Lead = () => {
           }
         }
       );
-
       toast.success("Lead deleted successfully");
       setData(prev => prev.filter(lead => lead._id !== id));
     } catch (error) {
@@ -147,10 +150,9 @@ const Lead = () => {
       toast.error(error.response?.data?.message || "Delete failed");
     }
   };
-
   const fetchSupportAgent = async () => {
     try {
-      const res = await axios.get(`${API}/agent/get-support-agent`, { headers: { Authorization: `Bearer ${token}`}});
+      const res = await axios.get(`${API}/agent/get-support-agent`, { headers: { Authorization: `Bearer ${token}` } });
       setAgents(res?.data?.data || []);
       console.log("fetched Support Agent", res.data.data);
     }
@@ -171,13 +173,12 @@ const Lead = () => {
       console.log(error, "Something went wrong");
     }
   }
-  
+
   useEffect(() => {
     fetchSupportAgent();
   }, [viewPage])
 
   const filteredData = data.filter((lead) => {
-
     const matchesSearch =
       lead.name?.toLowerCase().includes(search.toLowerCase()) ||
       lead.email?.toLowerCase().includes(search.toLowerCase()) ||
@@ -190,7 +191,7 @@ const Lead = () => {
     }
 
     else if (filterType === "tags") {
-      matchesFilter = lead.tags?.includes(filterValue);
+      matchesFilter = lead.tags?.some(t => t.name === filterValue);
     }
 
     else if (filterType === "assigned") {
@@ -271,6 +272,56 @@ const Lead = () => {
   useEffect(() => {
     fetchSubAdmin();
   }, [editActive])
+  const addNote = async () => {
+    if (!selectedLead?._id) {
+      return toast.error("No lead selected");
+    }
+    if (!newTag.trim()) {
+      return toast.error("Tag cannot be empty");
+    }
+    try {
+      await axios.post(`${API}/lead/add-tag/${selectedLead._id}`, { tag: newTag }, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Tag added");
+      setNewTag("");
+      setViewTags(false);
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to add tag");
+    }
+  };
+  const handleTagChange = (index, value) => {
+    const updatedTags = [...selectedLead.tags];
+    updatedTags[index] = value;
+    setSelectedLead({ ...selectedLead, tags: updatedTags });
+  };
+ const updateTag = async (oldTag, index) => {
+  try {
+    const newTag = selectedLead.tags[index];
+    if (!newTag.trim()) return toast.error("Tag cannot be empty");
+    await axios.put(`${API}/lead/update-tag/${selectedLead._id}`,{ oldTag, newTag },{ headers: { Authorization: `Bearer ${token}` } });
+    toast.success("Tag updated");
+    const updatedTags = [...selectedLead.tags];
+    updatedTags[index] = newTag;
+    setSelectedLead({ ...selectedLead, tags: updatedTags });
+    setData(prev => prev.map(l => l._id === selectedLead._id ? { ...l, tags: updatedTags }: l ));
+    setViewTagsEdit(false);
+  } catch (error) {
+    toast.error(error.response?.data?.message);
+  }
+};
+  const deleteTag = async (tag) => {
+    try {
+      await axios.delete(`${API}/lead/add-tag/${selectedLead._id}`, { data: { tag }, headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Tag deleted");
+      const updatedTags = selectedLead.tags.filter(t => t !== tag);
+      setSelectedLead({ ...selectedLead, tags: updatedTags });
+      setData(prev => prev.map(l => l._id === selectedLead._id ? { ...l, tags: updatedTags } : l))
+    } catch (error) {
+      toast.error(error.response?.data?.message);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -357,15 +408,15 @@ const Lead = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {loading ? (<tr style={{ height: "300px" }}><td colSpan={12}>Leads Loading....</td></tr>) : (filteredData.length < 0 ? (<tr style={{ height: "300px" }}><td colSpan={12}>No Leads Created yet....</td></tr>) : (filteredData.map((leads) => (
+                  {loading ? (<tr style={{ height: "300px" }}><td colSpan={12}>Leads Loading....</td></tr>) : (filteredData.length === 0 ? (<tr style={{ height: "300px" }}><td colSpan={12}>No Leads Created yet....</td></tr>) : (filteredData.map((leads) => (
                     <tr key={leads._id}>
                       <td><input type='checkbox' /></td>
                       <td>{leads?.name}</td>
                       <td>{leads?.email}</td>
                       <td>{leads?.phoneNumber}</td>
                       <td>{leads?.source}</td>
-                      <td className={`status ${leads?.status === "New" ? "status-new" : leads?.status === "Contacted" ? "status-contacted" : leads?.status === "Qualified" ? "status-qualified" : leads?.status === "Lost" ? "status-lost" : leads?.status === "Won" ? "status-won": "" }`}><span>{leads?.status}</span></td>
-                      <td>{leads.tags.length > 0 ? (leads?.tags?.map((tag, index) => (<><span key={index} className='tagChip'>{tag}</span><button className='tagBtn' onClick={()=> setViewTags(true)}><FaPlus /></button></>))) : (<><span>Click to add</span><button className='tagBtn'  onClick={()=> setViewTags(true)}><FaPlus /></button> </>) } </td>
+                      <td className={`status ${leads?.status === "New" ? "status-new" : leads?.status === "Contacted" ? "status-contacted" : leads?.status === "Qualified" ? "status-qualified" : leads?.status === "Lost" ? "status-lost" : leads?.status === "Won" ? "status-won" : ""}`}><span>{leads?.status}</span></td>
+                      <td >{leads.tags.length > 0 ? (leads?.tags?.map((tag, index) => (<React.Fragment key={index}><span className='tagChip'>{tag}</span></React.Fragment>))) : (<span>Click to add</span>)}<button className='tagBtn' onClick={() => { setSelectedLead(leads); setViewTags(true) }}><FaPlus /></button>{leads.tags.length > 0 ? (<button className='threeDot' onClick={() => { setSelectedLead(leads); setViewTagsEdit(true) }}><HiDotsVertical /></button>) : ("")}</td>
                       <td>
                         {leads?.notes?.length > 0 ? (
                           <>
@@ -376,9 +427,9 @@ const Lead = () => {
                                 .toLocaleString()}
                             </strong>
                           </>
-                        ): (<span>No Notes</span>)}
+                        ) : (<span>No Notes</span>)}
                       </td>
-                      <td>{leads?.assigned?.firstName + " " + leads?.assigned?.lastName  || "Not assigned"}</td>
+                      <td>{leads?.assigned?.firstName + " " + leads?.assigned?.lastName || "Not assigned"}</td>
                       <td><button className='eye' onClick={() => { setSelectedLead(leads); setViewPage(true) }}><FaRegEye /></button></td>
                       <td><button
                         className='edit'
@@ -507,7 +558,7 @@ const Lead = () => {
                       ))}
                     </select>
                   </div>)}
-                     {role === "Sub Admin" && (<div className="lastName">
+                  {role === "Sub Admin" && (<div className="lastName">
                     <label>Assigned to</label>
                     <select
                       value={updateData.assigned}
@@ -563,7 +614,7 @@ const Lead = () => {
             </div>
           </div>
         </div>)}
-   {viewTags && (
+      {viewTags && (
         <div className="popUpProfile viewTags" onClick={() => setViewTags(false)}>
           <div className="popUpModal" onClick={(e) => e.stopPropagation()}>
             <div className="headerPopUp">
@@ -572,12 +623,36 @@ const Lead = () => {
               <button onClick={() => setViewTags(false)}>X</button>
             </div>
             <div className='popUpEditProfile viewTag'>
-                <input type='text' placeholder='Add your Tags here' value={updateData?.tags} onChange={(e)=> setUpdateData(e.target.value)}/>
+              <input type='text' placeholder='Add your Tags here' value={newTag} onChange={(e) => setNewTag(e.target.value)} />
             </div>
-            <button className='tagBtn' onClick={handleUpdate}>Add tag</button>
+            <button className='tagBtn' onClick={addNote}>Add tag</button>
           </div>
-        </div>)}
-
+        </div>
+      )}
+      {viewTagsEdit && (<div className="popUpProfile viewTags" onClick={() => setViewTagsEdit(false)}>
+        <div className="popUpModal" onClick={(e) => e.stopPropagation()}>
+          <div className="headerPopUp">
+            <h2>Tags</h2>
+            <p>Edit Or Delete Your Tags here.</p>
+            <button onClick={() => setViewTagsEdit(false)}>X</button>
+          </div>
+          <div className='popUpEditProfile viewTag'>
+            {selectedLead?.tags?.length > 0 ? selectedLead?.tags?.map((tag, index) => {
+              const originalTag = data.find(l => l._id === selectedLead._id)?.tags[index];
+              return (
+                <div className='tagEditDeleteMain' key={index}>
+                  <input value={tag} onChange={(e) => handleTagChange(index, e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") {e.preventDefault(); updateTag(originalTag, index);}}} />
+                  <div className="buttonTags">
+                    <button className='tagEdit' onClick={() => updateTag(originalTag, index)}><FaEdit /></button>
+                    <button className='tagDelete' onClick={() => deleteTag(tag)}><MdDeleteForever /></button>
+                  </div>
+                </div>
+              );
+            }): (<p className='notags'>No Tags yet</p>)}
+           
+          </div>
+        </div>
+      </div>)}
     </>
   )
 }

@@ -97,7 +97,7 @@ cursor: pointer;
     cursor: pointer;
 }
 .leadSection .leadContent .bottomContent table td .tagBtn{
-    margin-left: 10px;
+    margin: 10px;
 }
 .leadSection .leadContent .bottomContent table td .edit{
     background-color: darkgreen;
@@ -387,4 +387,56 @@ table tr .status-new span {
     background-color: green;
     padding: 10px 20px;
     border-radius: 5px;
+}
+.tagChip{
+    background: grey;
+    padding: 5px;
+    border-radius: 2px;
+    margin-right: 10px;
+}
+table{
+    border-bottom: 1px solid #fff;
+}
+.threeDot{
+    background-color: transparent;
+    margin: 10px;
+    cursor: pointer;
+}
+.viewTags .popUpModal .tagEditDeleteMain{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+}
+.viewTags .popUpModal .tagEditDelete p{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.viewTags .popUpModal .tagEditDeleteMain .buttonTags{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+.viewTags .popUpModal .tagEditDeleteMain .tagEdit{
+    position: inherit;
+    cursor: pointer;
+    color: darkgreen;
+}
+.viewTags .popUpModal .tagEditDeleteMain .tagDelete{
+    position: inherit;
+    cursor: pointer;
+    color: red;
+}
+.viewTags .popUpModal .notags{
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid grey;
 }
