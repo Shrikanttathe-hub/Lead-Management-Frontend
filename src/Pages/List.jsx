@@ -271,7 +271,7 @@ const List = () => {
                             {error.phoneNumber && <p className="signUpError">{error.phoneNumber}</p>}
                             <input placeholder='Email' type='email' value={signUpData.email} onChange={(e) => { setsignUpData({ ...signUpData, email: e.target.value }); setError({ ...error, email: '' }); }} />
                             {error.email && <p className="signUpError">{error.email}</p>}
-                            <input placeholder='Password' type='password' value={signUpData.password} onChange={(e) => { setsignUpData({ ...signUpData, password: e.target.value }); setError({ ...error, password: '' }); }} />
+                            <input placeholder='Password' type='password' minLength={5} value={signUpData.password} onChange={(e) => { setsignUpData({ ...signUpData, password: e.target.value }); setError({ ...error, password: '' }); }} />
                             {error.password && <p className="signUpError">{error.password}</p>}
                             <input placeholder='Confirm Password' type='password' value={signUpData.confirmPassword} onChange={(e) => { setsignUpData({ ...signUpData, confirmPassword: e.target.value }); setError({ ...error, confirmPassword: '' }); }} />
                             {error.confirmPassword && <p className="signUpError">{error.confirmPassword}</p>}

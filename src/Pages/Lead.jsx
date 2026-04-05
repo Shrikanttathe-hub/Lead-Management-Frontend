@@ -41,6 +41,8 @@ const Lead = () => {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const fetchData = () => {
     setLoading(true);
     axios.get(`${API}/lead/lead-list`, {
@@ -191,7 +193,7 @@ const Lead = () => {
     }
 
     else if (filterType === "tags") {
-      matchesFilter = lead.tags?.some(t => t.name === filterValue);
+      matchesFilter = lead.tags?.some(t => t.toLowerCase().includes(filterValue.toLowerCase()));
     }
 
     else if (filterType === "assigned") {
@@ -199,8 +201,18 @@ const Lead = () => {
     }
 
     else if (filterType === "createdAt") {
-      matchesFilter = new Date(lead.createdAt)
-        .toLocaleDateString() === filterValue;
+      const leadDate = new Date(lead.createdAt);
+
+      if (fromDate) {
+        const from = new Date(fromDate);
+        if (leadDate < from) return false;
+      }
+
+      if (toDate) {
+        const to = new Date(toDate);
+        to.setHours(23, 59, 59, 999);
+        if (leadDate > to) return false;
+      }
     }
 
     return matchesSearch && matchesFilter;
@@ -226,13 +238,13 @@ const Lead = () => {
 
     saveAs(fileData, "Leads.xlsx");
   };
-  const handleImport = (e) => {
+  const handleImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
 
-    reader.onload = (evt) => {
+    reader.onload = async (evt) => {
       const data = new Uint8Array(evt.target.result);
       const workbook = XLSX.read(data, { type: "array" });
 
@@ -295,21 +307,21 @@ const Lead = () => {
     updatedTags[index] = value;
     setSelectedLead({ ...selectedLead, tags: updatedTags });
   };
- const updateTag = async (oldTag, index) => {
-  try {
-    const newTag = selectedLead.tags[index];
-    if (!newTag.trim()) return toast.error("Tag cannot be empty");
-    await axios.put(`${API}/lead/update-tag/${selectedLead._id}`,{ oldTag, newTag },{ headers: { Authorization: `Bearer ${token}` } });
-    toast.success("Tag updated");
-    const updatedTags = [...selectedLead.tags];
-    updatedTags[index] = newTag;
-    setSelectedLead({ ...selectedLead, tags: updatedTags });
-    setData(prev => prev.map(l => l._id === selectedLead._id ? { ...l, tags: updatedTags }: l ));
-    setViewTagsEdit(false);
-  } catch (error) {
-    toast.error(error.response?.data?.message);
-  }
-};
+  const updateTag = async (oldTag, index) => {
+    try {
+      const newTag = selectedLead.tags[index];
+      if (!newTag.trim()) return toast.error("Tag cannot be empty");
+      await axios.put(`${API}/lead/update-tag/${selectedLead._id}`, { oldTag, newTag }, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Tag updated");
+      const updatedTags = [...selectedLead.tags];
+      updatedTags[index] = newTag;
+      setSelectedLead({ ...selectedLead, tags: updatedTags });
+      setData(prev => prev.map(l => l._id === selectedLead._id ? { ...l, tags: updatedTags } : l));
+      setViewTagsEdit(false);
+    } catch (error) {
+      toast.error(error.response?.data?.message);
+    }
+  };
   const deleteTag = async (tag) => {
     try {
       await axios.delete(`${API}/lead/add-tag/${selectedLead._id}`, { data: { tag }, headers: { Authorization: `Bearer ${token}` } });
@@ -336,12 +348,12 @@ const Lead = () => {
               <div className="filter">
                 <div className="custom-select">
                   <label htmlFor="leadByFilter">Filter</label>
-                  <select onChange={(e) => { setFilterType(e.target.value); setFilterValue("") }}>
+                  <select onChange={(e) => { setFilterType(e.target.value); setFilterValue(""); setFromDate(""); setToDate("") }}>
                     <option value="">All</option>
                     <option value="status">Status</option>
                     <option value="tags">Tags</option>
                     <option value="createdAt">By Date</option>
-                    <option value="assigned">Assigned Agent</option>
+                    {(role === "Super Admin" || role === "Sub Admin") && <option value="assigned">Assigned Agent</option>}
                   </select>
                   {filterType === "status" && (
                     <select onChange={(e) => setFilterValue(e.target.value)}>
@@ -353,43 +365,58 @@ const Lead = () => {
                       <option value="Won">Won</option>
                     </select>
                   )}
-
                   {filterType === "assigned" && (
                     <select onChange={(e) => setFilterValue(e.target.value)}>
                       <option value="">Select Agent</option>
-                      {agents.map(agent => (
+                      {role === "Super Admin" && (supportAgentData.map(agent => (
                         <option key={agent._id} value={agent._id}>
-                          {agent.firstName}
+                          {agent?.firstName + " " + agent?.lastName} (Sub Admin)
                         </option>
-                      ))}
+                      )))}
+                      {(role === "Super Admin" || role === "Sub Admin") && (agents.map(agent => (
+                        <option key={agent._id} value={agent._id}>
+                          {agent?.firstName + " " + agent?.lastName} (Support Agent)
+                        </option>
+                      )))}
                     </select>
                   )}
-
                   {filterType === "tags" && (
-                    <input
-                      placeholder="Enter tag"
-                      onChange={(e) => setFilterValue(e.target.value)}
-                    />
+                    <input placeholder="Enter tag" onChange={(e) => setFilterValue(e.target.value)} />
+                  )}
+                  {filterType === "createdAt" && (
+                    <div style={{ display: "flex",justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                        <label>From</label>
+                      <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+                      <label>To</label>
+                      <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+                    </div>
                   )}
                 </div>
               </div>
-              <div className="exportButtton">
-                <button onClick={handleExport}><PiExportBold />Export</button>
-              </div>
-              <div className="ImportButtton">
-                <label className="importBtn">
-                  <FaFileImport /> Import
-                  <input
-                    type="file"
-                    accept=".xlsx, .xls"
-                    hidden
-                    onChange={handleImport}
-                  />
-                </label>
-              </div>
-              <div className="AddLeadButtton">
+              {(role === "Super Admin" || role === "Sub Admin") && (
+                <>
+                  <div className="exportButtton">
+                    <button onClick={handleExport}><PiExportBold />Export</button>
+                  </div>
+                  <div className="ImportButtton">
+                    <label className="importBtn">
+                      <FaFileImport /> Import
+                      <input
+                        type="file"
+                        accept=".xlsx, .xls"
+                        hidden
+                        onChange={handleImport}
+                      />
+                    </label>
+                  </div>
+                </>
+              )}
+              {(role === "Super Admin" || role === "Sub Admin") && <div className="AddLeadButtton">
                 <button onClick={() => setEditActive(true)}> <FaPlus /> Add Lead</button>
-              </div>
+              </div>}
+            </div>
+            <div className="total">
+              <p style={{textAlign:"start"}}>Total Leads: {data.length}</p>
             </div>
             <div className="bottomContent">
               <table>
@@ -641,15 +668,15 @@ const Lead = () => {
               const originalTag = data.find(l => l._id === selectedLead._id)?.tags[index];
               return (
                 <div className='tagEditDeleteMain' key={index}>
-                  <input value={tag} onChange={(e) => handleTagChange(index, e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") {e.preventDefault(); updateTag(originalTag, index);}}} />
+                  <input value={tag} onChange={(e) => handleTagChange(index, e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); updateTag(originalTag, index); } }} />
                   <div className="buttonTags">
                     <button className='tagEdit' onClick={() => updateTag(originalTag, index)}><FaEdit /></button>
                     <button className='tagDelete' onClick={() => deleteTag(tag)}><MdDeleteForever /></button>
                   </div>
                 </div>
               );
-            }): (<p className='notags'>No Tags yet</p>)}
-           
+            }) : (<p className='notags'>No Tags yet</p>)}
+
           </div>
         </div>
       </div>)}

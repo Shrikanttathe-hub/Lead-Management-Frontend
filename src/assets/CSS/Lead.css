@@ -49,6 +49,9 @@
     padding: 10px 10px;
     font-size: 18px;
 }
+.leadSection .leadContent .topbar .filter .custom-select input{
+    padding: 10px 10px;
+}
 .leadSection .leadContent .topbar .ImportButtton{
     background-color: #757575;
     padding: 10px 20px;
