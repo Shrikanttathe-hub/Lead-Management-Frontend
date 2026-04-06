@@ -241,44 +241,50 @@ const Lead = () => {
   const handleImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
-
     reader.onload = async (evt) => {
-      const data = new Uint8Array(evt.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-      console.log("Imported Data:", jsonData);
-
-      jsonData.forEach(async (lead) => {
-        try {
-          await axios.post(
-            `${API}/lead/create`,
-            {
-              name: lead.Name,
-              email: lead.Email,
-              phoneNumber: lead.Phone,
-              status: lead.Status || "New",
-              source: lead.Source || "",
-            },
-            {
-              headers: { Authorization: `Bearer ${token}` }
+      try {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        console.log("Imported Data:", jsonData);
+        for (const lead of jsonData) {
+          try {
+            const payload = {
+              name: String(lead.name || "").trim(),
+              email: String(lead.email || "").trim(),
+              phoneNumber: String(lead.phoneNumber || ""),
+              status: lead.status || "New",
+              source: lead.source || "",
+              tags: [],
+              assigned: null,
+              assignedModel: null,
+              note: ""
+            };
+            if (!payload.name || !payload.email || !payload.phoneNumber) {
+              console.log("Skipping invalid row:", payload);
+              continue;
             }
-          );
-        } catch (err) {
-          console.log("Import error", err);
+            console.log("Sending to API:", payload);
+            await axios.post(`${API}/lead/create`, payload, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+
+          } catch (err) {
+            toast.error(err.response?.data)
+            console.log("Backend error:", err.response?.data);
+          }
         }
-      });
+        toast.success("Import completed successfully");
+        fetchData();
 
-      toast.success("Import completed");
-      fetchData();
+      } catch (error) {
+        console.error("Import failed:", error.response?.data);
+        toast.error(error.response?.data);
+      }
     };
-
     reader.readAsArrayBuffer(file);
   };
   useEffect(() => {
@@ -384,8 +390,8 @@ const Lead = () => {
                     <input placeholder="Enter tag" onChange={(e) => setFilterValue(e.target.value)} />
                   )}
                   {filterType === "createdAt" && (
-                    <div style={{ display: "flex",justifyContent: "center", alignItems: "center", gap: "10px" }}>
-                        <label>From</label>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                      <label>From</label>
                       <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
                       <label>To</label>
                       <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
@@ -416,7 +422,7 @@ const Lead = () => {
               </div>}
             </div>
             <div className="total">
-              <p style={{textAlign:"start"}}>Total Leads: {data.length}</p>
+              <p style={{ textAlign: "start" }}>Total Leads: {data.length}</p>
             </div>
             <div className="bottomContent">
               <table>
