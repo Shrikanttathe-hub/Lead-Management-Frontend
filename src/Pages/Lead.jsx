@@ -43,6 +43,8 @@ const Lead = () => {
   const [filterValue, setFilterValue] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
   const fetchData = () => {
     setLoading(true);
     axios.get(`${API}/lead/lead-list`, {
@@ -218,7 +220,12 @@ const Lead = () => {
     return matchesSearch && matchesFilter;
   });
   const handleExport = () => {
-    const exportData = data.map((lead) => ({
+    const selectedData = data.filter(lead => selectedLeads.includes(lead._id));
+    if(selectedData.length === 0){
+      toast.error("Please select at least one to export");
+      return;
+    }
+    const exportData = selectedData.map((lead) => ({
       Name: lead.name,
       Email: lead.email,
       Phone: lead.phoneNumber,
@@ -226,17 +233,16 @@ const Lead = () => {
       Source: lead.source,
       Assigned: lead.assigned?.firstName || "Not Assigned",
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Leads");
-
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const fileData = new Blob([excelBuffer], {
       type: "application/octet-stream",
     });
-
     saveAs(fileData, "Leads.xlsx");
+    setSelectedLeads([]);
+    setSelectAll(false);
   };
   const handleImport = async (e) => {
     const file = e.target.files[0];
@@ -339,7 +345,13 @@ const Lead = () => {
       toast.error(error.response?.data?.message);
     }
   };
-
+useEffect(() => {
+  if(selectedLeads.length === filteredData.length && filteredData.length > 0){
+    setSelectAll(true);
+  }else{
+    setSelectAll(false);
+  }
+}, [selectedLeads, filteredData]);
   return (
     <>
       <Header />
@@ -422,13 +434,16 @@ const Lead = () => {
               </div>}
             </div>
             <div className="total">
-              <p style={{ textAlign: "start" }}>Total Leads: {data.length}</p>
+              <p style={{ textAlign: "start" }}>Total Leads: {filteredData.length}</p>
             </div>
             <div className="bottomContent">
               <table>
                 <thead>
                   <tr>
-                    <th><input type='checkbox' /></th>
+                    <th><input type='checkbox' checked={selectAll} onChange={(e)=>{ if(e.target.checked){setSelectedLeads(filteredData.map(lead => lead._id)); setSelectAll(true);}else{
+                      setSelectedLeads([]);
+                      setSelectAll(false);
+                    }}}/></th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
@@ -443,7 +458,11 @@ const Lead = () => {
                 <tbody>
                   {loading ? (<tr style={{ height: "300px" }}><td colSpan={12}>Leads Loading....</td></tr>) : (filteredData.length === 0 ? (<tr style={{ height: "300px" }}><td colSpan={12}>No Leads Created yet....</td></tr>) : (filteredData.map((leads) => (
                     <tr key={leads._id}>
-                      <td><input type='checkbox' /></td>
+                      <td><input type='checkbox' checked={selectedLeads.includes(leads._id)} onChange={(e)=>{if(e.target.checked){
+                        setSelectedLeads(prev => [...prev, leads._id]);
+                      }else{
+                        setSelectedLeads(prev => prev.filter(id => id !== leads._id));
+                      }}} /></td>
                       <td>{leads?.name}</td>
                       <td>{leads?.email}</td>
                       <td>{leads?.phoneNumber}</td>

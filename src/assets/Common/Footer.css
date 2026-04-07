@@ -9,6 +9,7 @@ footer .footerContent{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-align: start;
 }
 footer .footerContent .logo{
     display: flex;
@@ -16,11 +17,17 @@ footer .footerContent .logo{
     align-items: center;
     flex-direction: column;
     width: 20%;
+    text-align: start;
 }
 footer .footerContent .logo .logoImage{
  display: flex;
  justify-content: center;
  align-items: center;
+ width: 100%;
+}
+footer .footerContent .logo .logoImage h3 {
+ width: 100%;
+ padding-left: 20px;
 }
 footer .footerContent .logo .logoImage img{
     width: 100%;
